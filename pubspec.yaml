@@ -1,0 +1,8 @@
+name: mockable_filesystem
+version: 0.0.1
+author: Dart Team <misc@dartlang.org>
+description: Provides a FileSystem factory class for allocating File, Directory and Link objects, with two implementations - one which in turn returns the real objects from dart:io, and one which returns mock versions. This allows  tests to be written that make use of files and directories without having to create them on disk. The mock File/Directory/Link classes are not complete, but have sufficient functionality to work in most cases. The ultimate aim is to have complete mock implementations, as well as the  ability to mock Windows file systems on Linux/Mac and vice-versa, to help  with testing code for cross-platform correctness.
+homepage: https://github.com/dart-lang/mockable_filesystem
+dependencies:
+  logging: any
+  path: any

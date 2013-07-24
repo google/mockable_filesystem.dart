@@ -1,0 +1,11 @@
+name: sample_pubspec
+description: A sample application
+dependencies:
+  logging: any
+  mockable_filesystem: any
+  path: any
+  unittest: any
+
+#dependencies:
+#  js: any
+#  unittest: any
