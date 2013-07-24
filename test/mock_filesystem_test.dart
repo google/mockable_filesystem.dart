@@ -4,10 +4,6 @@ import 'package:unittest/unittest.dart';
 import 'package:unittest/vm_config.dart';
 import 'package:mockable_filesystem/mock_filesystem.dart';
 
-/**
- * These tests are not expected to be run as part of normal automated testing,
- * as they are slow and they have external dependencies.
- */
 main() {
   useVMConfiguration();
 
