@@ -1,8 +1,0 @@
-name: Test for mockable filesystem.
-description: Some tests for mockable filesystem. Not comprehensive yet.
-dependencies:
-  logging: ">=0.6.5"
-  mockable_filesystem: ">=0.0.1"
-  path: ">=0.6.5"
-  unittest: ">=0.6.5"
-

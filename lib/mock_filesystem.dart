@@ -80,10 +80,11 @@ class MockFile extends MockFileSystemEntity implements File {
     if (myType == FileSystemEntityType.LINK) {
       var targetType = MockFileSystemEntity.typeSync(path);
       if (targetType != FileSystemEntityType.FILE) {
-        throw new FileException("Cannot delete $path; link target not a file");
+        throw new FileSystemException(
+            "Cannot delete $path; link target not a file", path);
       }
     } else if (myType != FileSystemEntityType.FILE) {
-      throw new FileException("Cannot delete $path; not a file");
+      throw new FileSystemException("Cannot delete $path; not a file", path);
     }
     (fileSystem as MockFileSystem).removeEntity(path);
   }
@@ -104,7 +105,8 @@ class MockFile extends MockFileSystemEntity implements File {
         entity.type == FileSystemEntityType.FILE) {
       return (entity as MockFile)._lastModified;
     }
-    throw new FileException("Cannot get last modified time of $path");
+    throw new FileSystemException(
+        "Cannot get last modified time of $path", path);
   }
 
   Future<DateTime> lastModified() => new Future.value(lastModifiedSync());
@@ -119,7 +121,7 @@ class MockFile extends MockFileSystemEntity implements File {
         return file._contents;
       }
     }
-    throw new FileException("Cannot read $path");
+    throw new FileSystemException("Cannot read $path", path);
   }
 
   Future<String> readAsString({encoding}) =>
@@ -133,7 +135,7 @@ class MockFile extends MockFileSystemEntity implements File {
       if (entity.type == FileSystemEntityType.FILE) {
         file = (entity as MockFile);
       } else {
-        throw new FileException("Cannot write $path: not a file");
+        throw new FileSystemException("Cannot write $path: not a file", path);
       }
     } else {
       (fileSystem as MockFileSystem).setEntity(path, file = this);
@@ -173,7 +175,7 @@ class MockLink extends MockFileSystemEntity implements Link {
     if (entity != null) {
       (fileSystem as MockFileSystem).removeEntity(path);
     } else {
-      throw new LinkException("Cannot delete link $path");
+      throw new FileSystemException("Cannot delete link $path", path);
     }
   }
 
@@ -194,7 +196,7 @@ class MockLink extends MockFileSystemEntity implements Link {
     if (entity != null && entity._target != null) {
       return entity._target;
     }
-    throw new LinkException("Cannot get target of link $path");
+    throw new FileSystemException("Cannot get target of link $path", path);
   }
 
   Future<String> target() => new Future.value(target());
@@ -206,7 +208,8 @@ class MockLink extends MockFileSystemEntity implements Link {
     if (entity != null) {
       entity._target = target;
     } else {
-      throw new LinkException("Cannot update link $path: nonexistent.");
+      throw new FileSystemException(
+          "Cannot update link $path: nonexistent.", path);
     }
   }
 
@@ -263,13 +266,15 @@ class MockDirectory extends MockFileSystemEntity implements Directory {
     if (entity is! FileSystemEntity) return;
     if (entity.type != FileSystemEntityType.DIRECTORY) {
       if (!recursive) {
-        throw new DirectoryException("Can't remove $path; not a directory");
+        throw new FileSystemException(
+            "Can't remove $path; not a directory", path);
       }
     } else {
       // This is a directory.
       var dir = entity as MockDirectory;
       if (!recursive && dir._children.length > 0) {
-        throw new DirectoryException("Can't remove non-empty directory $path");
+        throw new FileSystemException(
+            "Can't remove non-empty directory $path", path);
       }
     }
     (fileSystem as MockFileSystem).removeEntity(path);
@@ -354,16 +359,19 @@ class MockFileSystem implements FileSystem {
     if (entityPath == null) return;
     var segments = pathos.split(entityPath);
     if (segments.length == 0) {
-      throw new FileException("Root directory already exists");
+      throw new FileSystemException(
+          "Root directory already exists", entityPath);
     }
     var segment = _getDirectory(segments, segments.length - 1, recursive);
     if (segment is String) {
-      throw new FileException("Cannot create $entityPath; $segment");
+      throw new FileSystemException(
+          "Cannot create $entityPath; $segment", entityPath);
     }
     var dir = segment as MockDirectory;
     var lastSegment = segments[segments.length -1];
     if (dir._children.containsKey(lastSegment)) {
-      throw new FileException("Cannot create $entityPath; already exists");
+      throw new FileSystemException(
+          "Cannot create $entityPath; already exists", entityPath);
     }
     dir._children[lastSegment] = entity;
   }
@@ -373,16 +381,18 @@ class MockFileSystem implements FileSystem {
     if (entityPath == null) return;
     var segments = pathos.split(entityPath);
     if (segments.length == 0) {
-      throw new FileException("Cannot delete root directory");
+      throw new FileSystemException("Cannot delete root directory", entityPath);
     }
     var segment = _getDirectory(segments, segments.length - 1, false);
     if (segment is String) {
-      throw new FileException("Cannot delete $entityPath; $segment");
+      throw new FileSystemException(
+          "Cannot delete $entityPath; $segment", entityPath);
     }
     var dir = segment as MockDirectory;
     var lastSegment = segments[segments.length -1];
     if (!dir._children.containsKey(lastSegment)) {
-      throw new FileException("Cannot delete $entityPath; doesn't exist");
+      throw new FileSystemException(
+          "Cannot delete $entityPath; doesn't exist", entityPath);
     }
     dir._children.remove(lastSegment);
   }
