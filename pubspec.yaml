@@ -7,7 +7,4 @@ dependencies:
   logging: ">=0.6.5"
   path: ">=0.6.5"
 dev_dependencies:
-  logging: ">=0.6.5"
-  mockable_filesystem: ">=0.0.1"
-  path: ">=0.6.5"
   unittest: ">=0.6.5"
